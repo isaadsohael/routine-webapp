@@ -7,58 +7,58 @@
     <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
 </head>
 <body>
-    <div class="container">
-        <h1 contenteditable="{{ 'true' if is_admin else 'false' }}">CLASS TESTS & LAB (6th Week)</h1>
-        
-        {% if error %}
-            <p style="color:red; font-weight:bold;">{{ error }}</p>
-        {% endif %}
-        
-        {% if not is_admin %}
-        <form method="POST" action="{{ url_for('login') }}">
-            <input type="text" name="username" placeholder="User ID" required>
-            <input type="password" name="password" placeholder="Password" required>
-            <button type="submit">Login as Admin</button>
-        </form>
-        {% else %}
-        <button onclick="logout()">Logout</button>
-        {% endif %}
+<div class="container">
+    <h1 contenteditable="{{ 'true' if is_admin else 'false' }}" , id="routineTitle">{{ title }}</h1>
 
-        <div class="table-wrapper">
-            <table id="routineTable" border="1">
-                <thead>
-                    <tr>
-                        {% for column in routine[0].keys() if column != 'id' %}
-                            <th contenteditable="{{ 'true' if is_admin else 'false' }}">{{ column }}</th>
-                        {% endfor %}
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for row in routine %}
-                        <tr contenteditable="{{ 'true' if is_admin else 'false' }}">
-                            {% for key, value in row.items() %}
-                                {% if key != 'id' %}
-                                    <td>{{ value }}</td>
-                                {% endif %}
-                            {% endfor %}
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
+    {% if error %}
+    <p style="color:red; font-weight:bold;">{{ error }}</p>
+    {% endif %}
 
+    {% if not is_admin %}
+    <form method="POST" action="{{ url_for('login') }}">
+        <input type="text" name="username" placeholder="User ID" required>
+        <input type="password" name="password" placeholder="Password" required>
+        <button type="submit">Login as Admin</button>
+    </form>
+    {% else %}
+    <button onclick="logout()">Logout</button>
+    {% endif %}
 
-        {% if is_admin %}
-        <div class="buttons">
-            <button onclick="addRow()">Add Row</button>
-            <button onclick="deleteRow()">Delete Row</button>
-            <button onclick="addColumn()">Add Column</button>
-            <button onclick="deleteColumn()">Delete Column</button>
-            <button onclick="saveChanges()">Save Changes</button>
-        </div>
-        {% endif %}
+    <div class="table-wrapper">
+        <table id="routineTable" border="1">
+            <thead>
+            <tr>
+                {% for column in routine[0].keys() if column != 'id' %}
+                <th contenteditable="{{ 'true' if is_admin else 'false' }}">{{ column }}</th>
+                {% endfor %}
+            </tr>
+            </thead>
+            <tbody>
+            {% for row in routine %}
+            <tr contenteditable="{{ 'true' if is_admin else 'false' }}">
+                {% for key, value in row.items() %}
+                {% if key != 'id' %}
+                <td>{{ value }}</td>
+                {% endif %}
+                {% endfor %}
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
     </div>
 
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
+
+    {% if is_admin %}
+    <div class="buttons">
+        <button onclick="addRow()">Add Row</button>
+        <button onclick="deleteRow()">Delete Row</button>
+        <button onclick="addColumn()">Add Column</button>
+        <button onclick="deleteColumn()">Delete Column</button>
+        <button onclick="saveChanges()">Save Changes</button>
+    </div>
+    {% endif %}
+</div>
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>
