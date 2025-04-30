@@ -16,9 +16,12 @@ def index():
 def login():
     username = request.form.get('username')
     password = request.form.get('password')
+
     if username == '2113022' and password == 'saadsohael':
         session['admin'] = True
-    return redirect(url_for('index'))
+        return redirect(url_for('index'))
+    else:
+        return render_template('index.html', routine=db.get_routine(), is_admin=False, error="Invalid user ID or password.")
 
 @app.route('/logout')
 def logout():
