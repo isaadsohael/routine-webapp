@@ -24,7 +24,25 @@ def init_db():
             c.execute('INSERT INTO routine (day, "1st Period", "2nd Period", "3rd Period", lab) VALUES (?, ?, ?, ?, ?)',
                       (day, '', '', '', ''))
     conn.commit()
+
+    c.execute('''
+        CREATE TABLE IF NOT EXISTS table_title (
+            title TEXT
+        )
+    ''')
+    c.execute('INSERT INTO table_title (title) VALUES ("CLASS TESTS & LABS")')
+    conn.commit()
+
     conn.close()
+
+
+def get_title():
+    conn = sqlite3.connect(DB_NAME)
+    c = conn.cursor()
+    c.execute('SELECT title FROM table_title LIMIT 1')
+    result = c.fetchone()
+    conn.close()
+    return result[0] if result else ''
 
 
 def get_routine():
@@ -42,11 +60,11 @@ def get_routine():
 
 
 def save_routine(routine_data):
-    if not routine_data:
+    if not routine_data['routine']:
         return
 
     # Get column names dynamically from the first row
-    column_names = list(routine_data[0].keys())
+    column_names = list(routine_data['routine'][0].keys())
 
     # Prepare SQL-compatible column names (sanitize if needed)
     columns_sql = ', '.join([f'"{col}" TEXT' for col in column_names])
@@ -63,7 +81,7 @@ def save_routine(routine_data):
         )
     ''')
     # Insert the new data
-    for row in routine_data:
+    for row in routine_data['routine']:
         placeholders = ', '.join(['?'] * len(column_names))
         values = [row.get(col, '') for col in column_names]
         c.execute(f'''
@@ -72,4 +90,13 @@ def save_routine(routine_data):
         ''', values)
 
     conn.commit()
+    c.execute('DROP TABLE IF EXISTS table_title')  # Clear existing title
+    c.execute('''
+            CREATE TABLE table_title (
+                title TEXT
+            )
+        ''')
+    c.execute('INSERT INTO table_title (title) VALUES (?)', (routine_data['title'],))
+    conn.commit()
+
     conn.close()
