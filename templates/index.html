@@ -9,7 +9,11 @@
 <body>
     <div class="container">
         <h1 contenteditable="{{ 'true' if is_admin else 'false' }}">CLASS TESTS & LAB (6th Week)</h1>
-
+        
+        {% if error %}
+            <p style="color:red; font-weight:bold;">{{ error }}</p>
+        {% endif %}
+        
         {% if not is_admin %}
         <form method="POST" action="{{ url_for('login') }}">
             <input type="text" name="username" placeholder="User ID" required>
