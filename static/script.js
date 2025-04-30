@@ -62,10 +62,12 @@ function saveChanges() {
         }
     }
 
+    const title = document.getElementById('routineTitle')?.innerText.trim() || 'CLASS TESTS & LABS';
+
     fetch('/save_routine', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
+        body: JSON.stringify({routine: data,title:title})
     }).then(res => res.json())
       .then(response => {
         alert('Routine saved successfully!');
