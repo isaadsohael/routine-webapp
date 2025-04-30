@@ -9,8 +9,9 @@ db.init_db()
 @app.route('/', methods=['GET'])
 def index():
     routine = db.get_routine()
+    title = db.get_title()
     is_admin = session.get('admin', False)
-    return render_template('index.html', routine=routine, is_admin=is_admin)
+    return render_template('index.html', routine=routine, is_admin=is_admin, title=title)
 
 @app.route('/login', methods=['POST'])
 def login():
@@ -22,6 +23,7 @@ def login():
         return redirect(url_for('index'))
     else:
         return render_template('index.html', routine=db.get_routine(), is_admin=False, error="Invalid user ID or password.")
+
 
 @app.route('/logout')
 def logout():
