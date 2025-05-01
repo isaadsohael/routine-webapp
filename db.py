@@ -1,13 +1,13 @@
 import psycopg2
 import os
+import subprocess
 
 # Use Render's DATABASE_URL environment variable
 DB_NAME = os.environ.get('DATABASE_URL')
+BACKUP_PATH = "backup.sql"
 
 def get_connection():
     return psycopg2.connect(DB_NAME, sslmode='require')
-
-
 
 
 def init_db():
@@ -42,6 +42,11 @@ def init_db():
 
     conn.close()
 
+def backup_database():
+    try:
+        subprocess.run(["pg_dump", DB_NAME], stdout=open(BACKUP_PATH, 'w'))
+    except Exception as e:
+        pass
 
 def get_title():
     conn = get_connection()
