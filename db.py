@@ -15,7 +15,7 @@ def init_db():
     c = conn.cursor()
     c.execute('''
         CREATE TABLE IF NOT EXISTS routine (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id SERIAL PRIMARY KEY,
             Day TEXT,
             "1st Period" TEXT,
             "2nd Period" TEXT,
@@ -83,7 +83,7 @@ def save_routine(routine_data):
     c.execute('DROP TABLE IF EXISTS routine')
     c.execute(f'''
         CREATE TABLE routine (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id SERIAL PRIMARY KEY,
             {columns_sql}
         )
     ''')
