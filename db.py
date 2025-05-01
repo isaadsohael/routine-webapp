@@ -1,10 +1,17 @@
-import sqlite3
+import psycopg2
+import os
 
-DB_NAME = 'app.db'
+# Use Render's DATABASE_URL environment variable
+DB_NAME = os.environ.get('DATABASE_URL')
+
+def get_connection():
+    return psycopg2.connect(DB_NAME, sslmode='require')
+
+
 
 
 def init_db():
-    conn = sqlite3.connect(DB_NAME)
+    conn = get_connection()
     c = conn.cursor()
     c.execute('''
         CREATE TABLE IF NOT EXISTS routine (
@@ -21,7 +28,7 @@ def init_db():
     if c.fetchone()[0] == 0:
         days = ['Saturday', 'Sunday', 'Monday', 'Tuesday', 'Wednesday']
         for day in days:
-            c.execute('INSERT INTO routine (day, "1st Period", "2nd Period", "3rd Period", lab) VALUES (?, ?, ?, ?, ?)',
+            c.execute('INSERT INTO routine (day, "1st Period", "2nd Period", "3rd Period", lab) VALUES (%s, %s, %s, %s, %s)',
                       (day, '', '', '', ''))
     conn.commit()
 
@@ -37,7 +44,7 @@ def init_db():
 
 
 def get_title():
-    conn = sqlite3.connect(DB_NAME)
+    conn = get_connection()
     c = conn.cursor()
     c.execute('SELECT title FROM table_title LIMIT 1')
     result = c.fetchone()
@@ -46,7 +53,7 @@ def get_title():
 
 
 def get_routine():
-    conn = sqlite3.connect(DB_NAME)
+    conn = get_connection()
     c = conn.cursor()
     c.execute('SELECT * FROM routine')
     rows = c.fetchall()
@@ -69,7 +76,7 @@ def save_routine(routine_data):
     # Prepare SQL-compatible column names (sanitize if needed)
     columns_sql = ', '.join([f'"{col}" TEXT' for col in column_names])
 
-    conn = sqlite3.connect(DB_NAME)
+    conn = get_connection()
     c = conn.cursor()
 
     # Drop and recreate the table dynamically
@@ -82,7 +89,7 @@ def save_routine(routine_data):
     ''')
     # Insert the new data
     for row in routine_data['routine']:
-        placeholders = ', '.join(['?'] * len(column_names))
+        placeholders = ', '.join(['%s'] * len(column_names))
         values = [row.get(col, '') for col in column_names]
         c.execute(f'''
             INSERT INTO routine ({', '.join(['"' + col + '"' for col in column_names])})
@@ -96,7 +103,7 @@ def save_routine(routine_data):
                 title TEXT
             )
         ''')
-    c.execute('INSERT INTO table_title (title) VALUES (?)', (routine_data['title'],))
+    c.execute('INSERT INTO table_title (title) VALUES (%s)', (routine_data['title'],))
     conn.commit()
 
     conn.close()
