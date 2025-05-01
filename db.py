@@ -37,7 +37,7 @@ def init_db():
             title TEXT
         )
     ''')
-    c.execute('INSERT INTO table_title (title) VALUES ("CLASS TESTS & LABS")')
+    c.execute("INSERT INTO table_title (title) VALUES ('CLASS TESTS & LABS')")
     conn.commit()
 
     conn.close()
